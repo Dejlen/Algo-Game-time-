@@ -37,6 +37,21 @@ class Player(GameSprite):
         elif self.y_speed < 0:
             for p in platform_touched:
                 self.rect.top = max(self.rect.top, p.rect.bottom)
+
+class Enemy(GameSprite):
+    side = "left"
+    def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
+        GameSprite.__init__(self, player_image, player_x, player_y, size_x, size_y)
+        self.speed = player_speed 
+    def update(self):
+        if self.rect.x <= 420:
+            self.side = "right"
+        if self.rect.x >= win_width - 85:
+            self.side = "left"
+        if self.side == "left":
+            self.rect.x -= self.speed
+        else:
+            self.rect.x += self.speed
 #окно
 win_width = 700
 win_height = 500
@@ -53,7 +68,7 @@ barriers.add(w2)
 
 #спрайт
 packman = Player('hero.png', 5, win_height - 80, 80, 80, 0, 0)
-monster = GameSprite('enemy.png', win_width - 80, 180, 80, 80)
+monster = Enemy('enemy.png', win_width - 80, 180, 80, 80, 1)
 final_sprite = GameSprite('enemy2.png', win_width - 85, win_height - 100, 80, 80)
 
 #переменная, отвечает за работу игры
@@ -95,6 +110,7 @@ while run:
         monster.reset()
         final_sprite.reset()
     # включаем движения
+        monster.update()
         packman.update()
         if sprite.collide_rect(packman, monster):
             finish = True
